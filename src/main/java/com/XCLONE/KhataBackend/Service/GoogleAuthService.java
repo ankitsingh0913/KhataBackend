@@ -14,7 +14,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class GoogleAuthService {
 
-    @Value("${google.client-id}")
+    @Value("${spring.google.client-id}")
     private String googleClientId;
 
     public GoogleIdToken.Payload verify(String idTokenString) throws Exception {

@@ -1,5 +1,6 @@
 package com.XCLONE.KhataBackend.Entity;
 
+import com.XCLONE.KhataBackend.enums.AuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,16 +30,16 @@ public class User {
         @Column(nullable = false)
         private String fullName;
 
-        @Column(nullable = true)
+        @Column(nullable = false)
         private String email;
 
         @Column(nullable = true)
         private String phone;
 
-        @Column(nullable = false)
+        @Column(nullable = true)
         private String password;
 
-        @Column(nullable = false)
+        @Column(nullable = true)
         private String shopName;
 
         @Column(nullable = false)
@@ -49,6 +50,10 @@ public class User {
 
         @Column(nullable = false)
         private Instant updatedAt;
+
+        @Enumerated(EnumType.STRING)
+        @Column(nullable = false)
+        private AuthProvider authProvider;
 
         @PrePersist
         public void onCreate() {

@@ -2,12 +2,16 @@ package com.XCLONE.KhataBackend.Controller;
 
 import com.XCLONE.KhataBackend.DTO.UserRequestDTO;
 import com.XCLONE.KhataBackend.DTO.UserResponseDTO;
+import com.XCLONE.KhataBackend.DTO.auth.GoogleLoginRequest;
 import com.XCLONE.KhataBackend.DTO.auth.LoginRequestDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginResponseDTO;
 import com.XCLONE.KhataBackend.DTO.auth.RefreshRequest;
+import com.XCLONE.KhataBackend.Service.GoogleAuthService;
 import com.XCLONE.KhataBackend.Service.RefreshTokenService;
 import com.XCLONE.KhataBackend.Service.UserService;
 import com.XCLONE.KhataBackend.Utils.JwtUtil;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,7 @@ public class AuthController {
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
+    private final GoogleAuthService googleAuthService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
@@ -69,5 +74,22 @@ public class AuthController {
                 .body(response);
     }
 
+        //GOOGLE AUTH
+    @PostMapping("/google")
+    public ResponseEntity<LoginResponseDTO> googleLogin(
+            @RequestBody GoogleLoginRequest request) throws Exception {
 
+        GoogleIdToken.Payload payload =
+                googleAuthService.verify(request.getIdToken());
+
+        String email = payload.getEmail();
+        String name = (String) payload.get("name");
+        if (name == null || name.isBlank()) {
+            name = email.split("@")[0];
+        }
+        LoginResponseDTO response =
+                userService.handleGoogleLogin(email, name);
+
+        return ResponseEntity.ok(response);
+    }
 }

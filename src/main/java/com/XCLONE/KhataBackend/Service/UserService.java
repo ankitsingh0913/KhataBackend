@@ -26,4 +26,6 @@ public interface UserService {
     void deleteUser(UUID id);
 
     LoginResponseDTO login(LoginRequestDTO requestDto);
+
+    LoginResponseDTO handleGoogleLogin(String email, String name);
 }

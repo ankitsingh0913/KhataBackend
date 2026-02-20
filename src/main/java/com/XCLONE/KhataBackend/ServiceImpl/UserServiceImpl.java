@@ -9,6 +9,7 @@ import com.XCLONE.KhataBackend.Repository.UserRepository;
 import com.XCLONE.KhataBackend.Service.RefreshTokenService;
 import com.XCLONE.KhataBackend.Service.UserService;
 import com.XCLONE.KhataBackend.Utils.JwtUtil;
+import com.XCLONE.KhataBackend.enums.AuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,11 +43,13 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = User.builder()
-                .fullName(requestDTO.getFullName())
                 .email(requestDTO.getEmail())
+                .fullName(requestDTO.getFullName())
+                .password(passwordEncoder.encode(requestDTO.getPassword()))
                 .phone(requestDTO.getPhone())
-                .password(passwordEncoder.encode(requestDTO.getPassword())) // will encode later
                 .shopName(requestDTO.getShopName())
+                .isActive(true)
+                .authProvider(AuthProvider.LOCAL)
                 .build();
 
         User saved =  userRepository.save(user);
@@ -116,6 +119,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
+        if (user.getAuthProvider() == AuthProvider.GOOGLE) {
+            throw new RuntimeException("Please login using Google");
+        }
+
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
@@ -128,4 +135,34 @@ public class UserServiceImpl implements UserService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    public LoginResponseDTO handleGoogleLogin(String email, String name) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseGet(() -> {
+
+                    User newUser = User.builder()
+                            .email(email)
+                            .fullName(name)
+                            .isActive(true)
+                            .authProvider(AuthProvider.GOOGLE)
+                            .build();
+
+
+                    return userRepository.save(newUser);
+                });
+
+        if (user.getAuthProvider() == AuthProvider.LOCAL) {
+            throw new RuntimeException("Account already exists with email/password login");
+        }
+
+        String accessToken = jwtUtil.generateToken(user.getId());
+        String refreshToken = refreshTokenService.generateAndStore(user.getId());
+
+        return LoginResponseDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 }
