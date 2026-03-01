@@ -1,7 +1,7 @@
 package com.XCLONE.KhataBackend.Controller;
 
-import com.XCLONE.KhataBackend.DTO.UserRequestDTO;
-import com.XCLONE.KhataBackend.DTO.UserResponseDTO;
+import com.XCLONE.KhataBackend.DTO.user.UserRequestDTO;
+import com.XCLONE.KhataBackend.DTO.user.UserResponseDTO;
 import com.XCLONE.KhataBackend.DTO.auth.GoogleLoginRequest;
 import com.XCLONE.KhataBackend.DTO.auth.LoginRequestDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginResponseDTO;
@@ -11,15 +11,11 @@ import com.XCLONE.KhataBackend.Service.RefreshTokenService;
 import com.XCLONE.KhataBackend.Service.UserService;
 import com.XCLONE.KhataBackend.Utils.JwtUtil;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.UUID;

@@ -8,16 +8,16 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "products",
+@Table(name = "customers",
         indexes = {
-                @Index(name = "idx_product_user", columnList = "user_id")
+                @Index(name = "idx_customer_user", columnList = "user_id")
         })
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -26,23 +26,25 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
+    private String phone;
+
+    private String email;
+
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String address;
 
-    @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal price;
+    @Column(nullable = false, precision = 14, scale = 2)
+    private BigDecimal totalPurchase = BigDecimal.ZERO;
 
-    private Integer stockQuantity;
+    @Column(nullable = false, precision = 14, scale = 2)
+    private BigDecimal pendingAmount = BigDecimal.ZERO;
 
     @Column(nullable = false)
-    private Boolean isActive = true;
+    private UUID userId;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     @Column(nullable = false)
     private Instant updatedAt;
-
-    @Column(nullable = false)
-    private UUID userId;   // owner
 }

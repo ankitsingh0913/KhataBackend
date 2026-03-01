@@ -1,4 +1,4 @@
-package com.XCLONE.KhataBackend.DTO;
+package com.XCLONE.KhataBackend.DTO.user;
 
 
 import jakarta.validation.constraints.*;

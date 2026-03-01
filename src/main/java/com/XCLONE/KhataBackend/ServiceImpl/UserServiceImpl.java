@@ -1,7 +1,7 @@
 package com.XCLONE.KhataBackend.ServiceImpl;
 
-import com.XCLONE.KhataBackend.DTO.UserRequestDTO;
-import com.XCLONE.KhataBackend.DTO.UserResponseDTO;
+import com.XCLONE.KhataBackend.DTO.user.UserRequestDTO;
+import com.XCLONE.KhataBackend.DTO.user.UserResponseDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginRequestDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginResponseDTO;
 import com.XCLONE.KhataBackend.Entity.User;
