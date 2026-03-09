@@ -2,4 +2,4 @@ version: "1.0"
 configurations:
   - name: default
     profile:
-      name: qodana.recommended
+      name: qodana.starter
