@@ -1,5 +1,5 @@
 version: "1.0"
 configurations:
   - name: default
-    profile:
-      name: qodana.starter
+    project-dir: .
+    config: qodana.yaml
