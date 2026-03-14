@@ -81,7 +81,7 @@ public class BillServiceImpl implements BillService {
                     .findByIdAndUserId(item.getProductId(), userId)
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
-            if (product.getStockQuantity() < item.getQuantity()) {
+            if (product.getStock() < item.getQuantity()) {
                 throw new RuntimeException("Insufficient stock for product: " + product.getName());
             }
 
@@ -98,7 +98,7 @@ public class BillServiceImpl implements BillService {
 
         for (int i = 0; i < products.size(); i++) {
 
-            BigDecimal price = products.get(i).getPrice();
+            BigDecimal price = products.get(i).getSellingPrice();
             BigDecimal quantity = BigDecimal.valueOf(items.get(i).getQuantity());
 
             subtotal = subtotal.add(price.multiply(quantity));
@@ -182,7 +182,7 @@ public class BillServiceImpl implements BillService {
             Product product = products.get(i);
             Integer quantity = items.get(i).getQuantity();
 
-            BigDecimal total = product.getPrice()
+            BigDecimal total = product.getSellingPrice()
                     .multiply(BigDecimal.valueOf(quantity));
 
             billItems.add(
@@ -190,7 +190,7 @@ public class BillServiceImpl implements BillService {
                             .billId(billId)
                             .productId(product.getId())
                             .productName(product.getName())
-                            .price(product.getPrice())
+                            .price(product.getSellingPrice())
                             .quantity(quantity)
                             .total(total)
                             .build()
@@ -206,7 +206,7 @@ public class BillServiceImpl implements BillService {
         for (int i = 0; i < products.size(); i++) {
 
             Product product = products.get(i);
-            product.setStockQuantity(product.getStockQuantity() - items.get(i).getQuantity());
+            product.setStock(product.getStock() - items.get(i).getQuantity());
         }
     }
 

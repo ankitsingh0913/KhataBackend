@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -30,9 +31,12 @@ public class RefreshTokenService {
 
         String key = "refresh:" + tokenId;
 
-        redisTemplate.opsForHash().put(key, "userId", userId.toString());
-        redisTemplate.opsForHash().put(key, "secret", hashedSecret);
-        redisTemplate.opsForHash().put(key, "revoked", "false");
+        Map<String, String> data = new HashMap<>();
+        data.put("userId", userId.toString());
+        data.put("secret", hashedSecret);
+        data.put("revoked", "false");
+
+        redisTemplate.opsForHash().putAll(key, data);
 
         redisTemplate.expire(key, Duration.ofSeconds(REFRESH_TOKEN_TTL));
 
@@ -77,9 +81,9 @@ public class RefreshTokenService {
         String newRefreshToken = generateAndStore(userId);
 
         return LoginResponseDTO.builder()
-                .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .build();
+            .accessToken(newAccessToken)
+            .refreshToken(newRefreshToken)
+            .build();
     }
 
 

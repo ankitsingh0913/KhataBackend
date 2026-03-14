@@ -1,5 +1,6 @@
 package com.XCLONE.KhataBackend.Entity;
 
+import com.XCLONE.KhataBackend.enums.UnitType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,13 +27,29 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = true)
+    private String category;
+
+    @Column(nullable = true)
+    private String barcode;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false, precision = 12, scale = 2)
-    private BigDecimal price;
+    private BigDecimal purchasePrice;
 
-    private Integer stockQuantity;
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal sellingPrice;
+
+    @Column(nullable = false)
+    private Integer stock = 0;
+
+    @Column(nullable = false)
+    private UnitType unit;  // e.g., pcs, kg, liter
+
+    @Column(nullable = false)
+    private Integer lowStockAlert = 10;
 
     @Column(nullable = false)
     private Boolean isActive = true;

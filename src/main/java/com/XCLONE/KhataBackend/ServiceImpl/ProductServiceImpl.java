@@ -5,6 +5,7 @@ import com.XCLONE.KhataBackend.DTO.product.ProductResponseDTO;
 import com.XCLONE.KhataBackend.Entity.Product;
 import com.XCLONE.KhataBackend.Repository.ProductRepository;
 import com.XCLONE.KhataBackend.Service.ProductService;
+import com.XCLONE.KhataBackend.enums.UnitType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +24,14 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = Product.builder()
                 .name(dto.getName())
+                .category(dto.getCategory())
+                .barcode(dto.getBarcode())
                 .description(dto.getDescription())
-                .price(dto.getPrice())
-                .stockQuantity(dto.getStockQuantity())
+                .purchasePrice(dto.getPurchasePrice())
+                .sellingPrice(dto.getSellingPrice())
+                .stock(dto.getStock())
+                .unit(dto.getUnit() != null ? dto.getUnit() : UnitType.pcs)
+                .lowStockAlert(dto.getLowStockAlert() != null ? dto.getLowStockAlert() : 10)
                 .userId(userId)
                 .isActive(true)
                 .createdAt(Instant.now())
@@ -52,8 +58,11 @@ public class ProductServiceImpl implements ProductService {
 
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        product.setStockQuantity(dto.getStockQuantity());
+        product.setPurchasePrice(dto.getPurchasePrice());
+        product.setSellingPrice(dto.getSellingPrice());
+        product.setStock(dto.getStock());
+        product.setUnit(dto.getUnit());
+        product.setLowStockAlert(dto.getLowStockAlert());
         product.setUpdatedAt(Instant.now());
 
         return mapToResponse(productRepository.save(product));
@@ -76,9 +85,17 @@ public class ProductServiceImpl implements ProductService {
         return ProductResponseDTO.builder()
                 .id(product.getId())
                 .name(product.getName())
+                .category(product.getCategory())
                 .description(product.getDescription())
-                .price(product.getPrice())
-                .stockQuantity(product.getStockQuantity())
+                .purchasePrice(product.getPurchasePrice())
+                .sellingPrice(product.getSellingPrice())
+                .stock(product.getStock())
+                .lowStockAlert(product.getLowStockAlert())
+                .barcode(product.getBarcode())
+                .unit(product.getUnit())
+                .isActive(product.getIsActive())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
                 .build();
     }
 }
