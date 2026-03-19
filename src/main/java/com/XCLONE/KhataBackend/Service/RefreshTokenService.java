@@ -20,8 +20,7 @@ public class RefreshTokenService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    private static final long REFRESH_TOKEN_TTL =
-            7 * 24 * 60 * 60; // 7 days in seconds
+    private static final long REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60; // 7 days in seconds
 
     public String generateAndStore(UUID userId) {
 
