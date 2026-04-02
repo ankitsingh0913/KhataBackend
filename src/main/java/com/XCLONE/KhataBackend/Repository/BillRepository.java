@@ -1,10 +1,8 @@
 package com.XCLONE.KhataBackend.Repository;
-
 import com.XCLONE.KhataBackend.Entity.Bill;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;

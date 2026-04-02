@@ -4,6 +4,7 @@ import com.XCLONE.KhataBackend.DTO.user.UserResponseDTO;
 import com.XCLONE.KhataBackend.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -21,6 +22,17 @@ public class UserController {
 
         UserResponseDTO response = userService.getUserById(id);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getCurrentUser() {
+        UUID uuid = (UUID)  SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        UserResponseDTO response = userService.getUserById(uuid);
         return ResponseEntity.ok(response);
     }
 }
