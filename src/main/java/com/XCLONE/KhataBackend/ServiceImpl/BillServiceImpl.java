@@ -3,6 +3,7 @@ package com.XCLONE.KhataBackend.ServiceImpl;
 import com.XCLONE.KhataBackend.DTO.bill.BillCreateRequestDTO;
 import com.XCLONE.KhataBackend.DTO.bill.BillResponseDTO;
 import com.XCLONE.KhataBackend.DTO.billItem.BillItemRequestDTO;
+import com.XCLONE.KhataBackend.DTO.billItem.BillItemResponseDTO;
 import com.XCLONE.KhataBackend.Entity.Bill;
 import com.XCLONE.KhataBackend.Entity.BillItem;
 import com.XCLONE.KhataBackend.Entity.Customer;
@@ -13,6 +14,7 @@ import com.XCLONE.KhataBackend.Repository.CustomerRepository;
 import com.XCLONE.KhataBackend.Repository.ProductRepository;
 import com.XCLONE.KhataBackend.Service.BillService;
 import com.XCLONE.KhataBackend.enums.BillStatus;
+import com.XCLONE.KhataBackend.enums.PaymentType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,13 +41,31 @@ public class BillServiceImpl implements BillService {
         // 1️⃣ Validate & fetch products
         List<Product> products = fetchAndValidateProducts(request.getItems(), userId);
 
-        // 2️⃣ Calculate financials
+        // 2️⃣ Handle CREDIT payment type
+        if (request.getPaymentType() == PaymentType.CREDIT) {
+            if (request.getCustomerId() == null) {
+                throw new RuntimeException("Customer is required for CREDIT payment type");
+            }
+            request.setPaidAmount(BigDecimal.ZERO);
+        }
+
+        // 3️⃣ Calculate financials
         BigDecimal subtotal = calculateSubtotal(products, request.getItems());
         BigDecimal total = calculateTotal(subtotal, request.getDiscount(), request.getTax());
 
+        // Handle paidAmount for non-credit payments (CASH, UPI, CARD)
+        if (request.getPaymentType() != PaymentType.CREDIT) {
+             // If paidAmount is exactly 0, default it to the full total amount.
+             if (request.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
+                 request.setPaidAmount(total);
+             }
+        }
+
         validatePayment(total, request.getPaidAmount());
 
-        BillStatus status = determineStatus(total, request.getPaidAmount());
+        BillStatus status = request.getPaymentType() == PaymentType.CREDIT
+                ? BillStatus.UNPAID
+                : determineStatus(total, request.getPaidAmount());
 
         // 3️⃣ Handle customer logic
         Customer customer = handleCustomerIfPresent(request.getCustomerId(), userId);
@@ -234,12 +254,23 @@ public class BillServiceImpl implements BillService {
     private BillResponseDTO mapToResponse(Bill bill,
                                           List<BillItem> items) {
 
+        List<BillItemResponseDTO> itemDTOs = items != null ? items.stream()
+                .map(item -> BillItemResponseDTO.builder()
+                        .productId(item.getProductId())
+                        .productName(item.getProductName())
+                        .price(item.getPrice())
+                        .quantity(item.getQuantity())
+                        .total(item.getTotal())
+                        .build())
+                .toList() : null;
+
         return BillResponseDTO.builder()
                 .id(bill.getId())
                 .billNumber(bill.getBillNumber())
                 .customerId(bill.getCustomerId())
                 .customerName(bill.getCustomerName())
                 .customerPhone(bill.getCustomerPhone())
+                .items(itemDTOs)
                 .subtotal(bill.getSubtotal())
                 .discount(bill.getDiscount())
                 .tax(bill.getTax())
@@ -247,6 +278,7 @@ public class BillServiceImpl implements BillService {
                 .paidAmount(bill.getPaidAmount())
                 .paymentType(bill.getPaymentType())
                 .status(bill.getStatus())
+                .notes(bill.getNotes())
                 .createdAt(bill.getCreatedAt())
                 .updatedAt(bill.getUpdatedAt())
                 .build();
