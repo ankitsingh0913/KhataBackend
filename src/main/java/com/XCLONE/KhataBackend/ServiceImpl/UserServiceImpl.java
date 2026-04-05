@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService {
         return UserResponseDTO.builder()
                 .id(user.getId())
                 .fullName(user.getFullName())
+                .shopName(user.getShopName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .isActive(user.isActive())
