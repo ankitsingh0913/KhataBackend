@@ -1,6 +1,7 @@
 package com.XCLONE.KhataBackend.Service;
 
 import com.XCLONE.KhataBackend.DTO.user.UserRequestDTO;
+import com.XCLONE.KhataBackend.DTO.user.UserUpdateRequestDTO;
 import com.XCLONE.KhataBackend.DTO.user.UserResponseDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginRequestDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginResponseDTO;
@@ -20,7 +21,7 @@ public interface UserService {
 
     Optional<User> getByPhone(String phone);
 
-    UserResponseDTO updateUser(UUID id, UserRequestDTO requestDTO);
+    UserResponseDTO updateUser(UUID id, UserUpdateRequestDTO requestDTO);
 
     void deleteUser(UUID id);
 

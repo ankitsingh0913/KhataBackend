@@ -1,6 +1,7 @@
 package com.XCLONE.KhataBackend.ServiceImpl;
 
 import com.XCLONE.KhataBackend.DTO.user.UserRequestDTO;
+import com.XCLONE.KhataBackend.DTO.user.UserUpdateRequestDTO;
 import com.XCLONE.KhataBackend.DTO.user.UserResponseDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginRequestDTO;
 import com.XCLONE.KhataBackend.DTO.auth.LoginResponseDTO;
@@ -84,13 +85,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(UUID id, UserRequestDTO requestDTO) {
+    public UserResponseDTO updateUser(UUID id, UserUpdateRequestDTO requestDTO) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setFullName(requestDTO.getFullName());
-        user.setPhone(requestDTO.getPhone());
+        if (requestDTO.getFullName() != null) {
+            user.setFullName(requestDTO.getFullName());
+        }
+        if (requestDTO.getPhone() != null) {
+            user.setPhone(requestDTO.getPhone());
+        }
+        if (requestDTO.getShopName() != null) {
+            user.setShopName(requestDTO.getShopName());
+        }
 
         User updated = userRepository.save(user);
 
@@ -148,7 +156,6 @@ public class UserServiceImpl implements UserService {
                             .isActive(true)
                             .authProvider(AuthProvider.GOOGLE)
                             .build();
-
 
                     return userRepository.save(newUser);
                 });
