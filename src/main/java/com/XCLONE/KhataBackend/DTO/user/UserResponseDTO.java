@@ -17,6 +17,7 @@ public class UserResponseDTO {
     private String email;
     private String phone;
     private String shopName;
+    private String upiId;
     private boolean isActive;
     private Instant createdAt;
 }

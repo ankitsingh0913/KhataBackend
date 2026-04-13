@@ -19,4 +19,7 @@ public class UserUpdateRequestDTO {
     @Size(min = 2, max = 150, message = "Shop name must be between 2 and 150 characters")
     private String shopName;
 
+    @Size(max = 100, message = "UPI ID must be less than 100 characters")
+    private String upiId;
+
 }

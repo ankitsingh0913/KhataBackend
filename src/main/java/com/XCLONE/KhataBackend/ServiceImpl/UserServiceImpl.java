@@ -99,6 +99,9 @@ public class UserServiceImpl implements UserService {
         if (requestDTO.getShopName() != null) {
             user.setShopName(requestDTO.getShopName());
         }
+        if (requestDTO.getUpiId() != null) {
+            user.setUpiId(requestDTO.getUpiId());
+        }
 
         User updated = userRepository.save(user);
 
@@ -115,6 +118,7 @@ public class UserServiceImpl implements UserService {
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .shopName(user.getShopName())
+                .upiId(user.getUpiId())
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .isActive(user.isActive())

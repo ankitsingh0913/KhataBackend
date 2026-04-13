@@ -42,6 +42,9 @@ public class User {
         @Column(nullable = true)
         private String shopName;
 
+        @Column(nullable = true)
+        private String upiId;
+
         @Column(nullable = false)
         private boolean isActive;
 
