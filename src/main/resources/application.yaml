@@ -1,31 +1,13 @@
 spring:
   application:
     name: KhataBackend
-  datasource:
-    url: jdbc:postgresql://localhost:5432/khata_db
-    username: postgres
-    password: admin@1234
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update   # use 'validate' in production
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
-  sql:
-    init:
-      mode: always
+  
+  # Set the default profile so it runs as DEV locally
+  profiles:
+    active: dev
 
   google:
     client-id: 337359007063-p8ahuajr786rbnephg7krr26887silnv.apps.googleusercontent.com
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 server:
   port: 8082
