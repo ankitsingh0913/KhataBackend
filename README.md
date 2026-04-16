@@ -182,4 +182,4 @@ Backend Developer | Spring Boot | Flutter | Scalable Systems
 
 # 📜 License
 
-This project is open-source and available under the MIT License.
+This project is open-source and available under the [MIT License](https://github.com/ankitsingh0913/KhataBackend/blob/master/LICENSE).
