@@ -1,6 +1,8 @@
 package com.XCLONE.KhataBackend.Entity;
 
 import com.XCLONE.KhataBackend.enums.BillStatus;
+import com.XCLONE.KhataBackend.enums.DeliveryChannel;
+import com.XCLONE.KhataBackend.enums.DeliveryStatus;
 import com.XCLONE.KhataBackend.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,10 +35,15 @@ public class Bill {
     @Column(nullable = false)
     private UUID userId;
 
+    private String shopName;
+    private String shopPhone;
+    private String shopAddress;
+
     private UUID customerId;
 
     private String customerName;   // Snapshot
     private String customerPhone;  // Snapshot
+    private String customerEmail;  // Snapshot
 
     @Column(nullable = false, precision = 14, scale = 2)
     private BigDecimal subtotal;
@@ -67,4 +74,22 @@ public class Bill {
 
     @Column(nullable = false)
     private Instant updatedAt;
+
+    @Column
+    private String receiptUrl;
+
+    @Column
+    private Instant lastDeliveryAttempt;
+
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus deliveryStatus;
+
+    @Enumerated(EnumType.STRING)
+    private DeliveryChannel deliveryChannel;
+
+    @Column
+    private Integer deliveryAttemptCount;
+
+    @Column(columnDefinition = "TEXT")
+    private String deliveryError;
 }

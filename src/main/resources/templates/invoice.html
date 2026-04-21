@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Receipt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #222;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            width: 100%;
+            padding: 20px;
+        }
+
+        .header, .footer {
+            text-align: center;
+        }
+
+        .shop-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .muted {
+            color: #666;
+            font-size: 11px;
+        }
+
+        .section {
+            margin-top: 18px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #999;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f2f2f2;
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .summary-table td {
+            border: none;
+            padding: 5px 0;
+        }
+
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-unpaid {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .status-partial {
+            color: #d68910;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 25px;
+            font-size: 11px;
+            color: #777;
+        }
+
+        .spacer {
+            height: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <div class="header">
+        <div class="shop-name" th:text="${shopName}">My Shop</div>
+        <div class="muted" th:text="${shopAddress}">Shop Address</div>
+        <div class="muted">Phone: <span th:text="${shopPhone}">9876543210</span></div>
+    </div>
+
+    <div class="section">
+        <table>
+            <tr>
+                <td><strong>Bill No:</strong> <span th:text="${billNumber}">BILL-001</span></td>
+                <td><strong>Date:</strong> <span th:text="${billDate}">20-04-2026</span></td>
+            </tr>
+            <tr>
+                <td><strong>Customer:</strong> <span th:text="${customerName}">Walk-in Customer</span></td>
+                <td><strong>Mobile:</strong> <span th:text="${customerPhone}">9999999999</span></td>
+            </tr>
+            <tr>
+                <td><strong>Payment Mode:</strong> <span th:text="${paymentMode}">UPI</span></td>
+                <td>
+                    <strong>Status:</strong>
+                    <span th:if="${paymentStatus == 'PAID'}" class="status-paid">PAID</span>
+                    <span th:if="${paymentStatus == 'UNPAID'}" class="status-unpaid">UNPAID</span>
+                    <span th:if="${paymentStatus == 'PARTIALLY_PAID'}" class="status-partial">PARTIALLY PAID</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Items</div>
+        <table>
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th class="right">Qty</th>
+                <th class="right">Price</th>
+                <th class="right">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.productName}">Product Name</td>
+                <td class="right" th:text="${item.quantity}">1</td>
+                <td class="right" th:text="${item.price}">100.00</td>
+                <td class="right" th:text="${item.total}">100.00</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Summary</div>
+        <table class="summary-table">
+            <tr>
+                <td><strong>Subtotal</strong></td>
+                <td class="right" th:text="${subtotal}">500.00</td>
+            </tr>
+            <tr>
+                <td><strong>Discount</strong></td>
+                <td class="right" th:text="${discount}">0.00</td>
+            </tr>
+            <tr>
+                <td><strong>Tax</strong></td>
+                <td class="right" th:text="${tax}">0.00</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td class="right" th:text="${total}">500.00</td>
+            </tr>
+            <tr>
+                <td><strong>Paid</strong></td>
+                <td class="right" th:text="${paid}">500.00</td>
+            </tr>
+            <tr>
+                <td><strong>Due</strong></td>
+                <td class="right" th:text="${due}">0.00</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <div>Thank you for shopping with us.</div>
+        <div th:if="${paymentStatus == 'UNPAID' || paymentStatus == 'UDHAR_ACTIVE'}">
+            Please pay the due amount on or before the due date.
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
