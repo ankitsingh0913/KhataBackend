@@ -21,3 +21,12 @@ spring:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:localhost}
       port: ${SPRING_DATA_REDIS_PORT:6379}
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:ankitjanghare2106@gmail.com}
+    password: ${MAIL_PASSWORD:vyyikxjbeholthzy}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true

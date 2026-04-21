@@ -8,11 +8,10 @@ import com.XCLONE.KhataBackend.Entity.Bill;
 import com.XCLONE.KhataBackend.Entity.BillItem;
 import com.XCLONE.KhataBackend.Entity.Customer;
 import com.XCLONE.KhataBackend.Entity.Product;
-import com.XCLONE.KhataBackend.Repository.BillItemRepository;
-import com.XCLONE.KhataBackend.Repository.BillRepository;
-import com.XCLONE.KhataBackend.Repository.CustomerRepository;
-import com.XCLONE.KhataBackend.Repository.ProductRepository;
+import com.XCLONE.KhataBackend.Entity.User;
+import com.XCLONE.KhataBackend.Repository.*;
 import com.XCLONE.KhataBackend.Service.BillService;
+import com.XCLONE.KhataBackend.Service.Notification.BillNotificationOrchestrator;
 import com.XCLONE.KhataBackend.enums.BillStatus;
 import com.XCLONE.KhataBackend.enums.PaymentType;
 import jakarta.transaction.Transactional;
@@ -33,6 +32,8 @@ public class BillServiceImpl implements BillService {
     private final BillItemRepository billItemRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
+    private final BillNotificationOrchestrator notificationOrchestrator;
 
     @Override
     @Transactional
@@ -70,8 +71,12 @@ public class BillServiceImpl implements BillService {
         // 3️⃣ Handle customer logic
         Customer customer = handleCustomerIfPresent(request.getCustomerId(), userId);
 
-        // 4️⃣ Create Bill entity
-        Bill bill = buildBillEntity(request, userId, subtotal, total, status, customer);
+        // 4️⃣ Fetch User details for Shop metadata
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 5️⃣ Create Bill entity
+        Bill bill = buildBillEntity(request, user, subtotal, total, status, customer);
 
         Bill savedBill = billRepository.save(bill);
 
@@ -85,6 +90,9 @@ public class BillServiceImpl implements BillService {
 
         // 7️⃣ Update Customer Ledger
         updateCustomerLedger(customer, total, request.getPaidAmount());
+
+        // 8️⃣ Fire async receipt delivery (PDF → S3 → Email)
+        notificationOrchestrator.processAndDeliver(savedBill);
 
         return mapToResponse(savedBill, billItems);
     }
@@ -166,7 +174,7 @@ public class BillServiceImpl implements BillService {
     }
 
     private Bill buildBillEntity(BillCreateRequestDTO request,
-                                 UUID userId,
+                                 User user,
                                  BigDecimal subtotal,
                                  BigDecimal total,
                                  BillStatus status,
@@ -174,10 +182,14 @@ public class BillServiceImpl implements BillService {
 
         return Bill.builder()
                 .billNumber(generateBillNumber())
-                .userId(userId)
+                .userId(user.getId())
+                .shopName(user.getShopName())
+                .shopPhone(user.getPhone())
+                .shopAddress(null) // User entity doesn't have an address field yet, but we'll set it as null for now
                 .customerId(customer != null ? customer.getId() : null)
                 .customerName(customer != null ? customer.getName() : null)
                 .customerPhone(customer != null ? customer.getPhone() : null)
+                .customerEmail(customer != null ? customer.getEmail() : null)
                 .subtotal(subtotal)
                 .discount(request.getDiscount())
                 .tax(request.getTax())
