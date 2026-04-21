@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
 @Service
 @RequiredArgsConstructor
 public class BillServiceImpl implements BillService {
@@ -92,7 +95,12 @@ public class BillServiceImpl implements BillService {
         updateCustomerLedger(customer, total, request.getPaidAmount());
 
         // 8️⃣ Fire async receipt delivery (PDF → S3 → Email)
-        notificationOrchestrator.processAndDeliver(savedBill);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                notificationOrchestrator.processAndDeliver(savedBill);
+            }
+        });
 
         return mapToResponse(savedBill, billItems);
     }

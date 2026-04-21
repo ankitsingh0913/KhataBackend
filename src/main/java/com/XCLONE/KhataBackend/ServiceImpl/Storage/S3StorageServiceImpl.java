@@ -82,11 +82,8 @@ public class S3StorageServiceImpl implements S3StorageService {
 
     @Override
     public byte[] downloadReceipt(String s3Key) {
-        try {
-            S3Object s3Object = s3Client.getObject(bucketName, s3Key);
+        try (S3Object s3Object = s3Client.getObject(bucketName,s3Key)) {
             byte[] content = s3Object.getObjectContent().readAllBytes();
-            s3Object.close();
-
             log.info("Receipt downloaded from S3: {}", s3Key);
             return content;
 

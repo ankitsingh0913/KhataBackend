@@ -123,18 +123,6 @@
 			<version>1.12.711</version>
 		</dependency>
 
-		<!-- Flying Saucer: core + PDF (OpenPDF) -->
-		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>flying-saucer-core</artifactId>
-			<version>9.13.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>flying-saucer-pdf</artifactId>
-			<version>9.13.3</version>
-		</dependency>
-
 		<!-- Thymeleaf for HTML templating -->
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
