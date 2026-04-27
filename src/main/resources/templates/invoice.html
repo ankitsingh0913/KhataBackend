@@ -186,6 +186,13 @@
         </div>
     </div>
 
+    <!-- SMART INVOICE QR CODE SECTION -->
+    <div th:if="${qrCodeBase64 != null}" class="section" style="text-align: center; border: 2px dashed #ccc; padding: 15px; margin-top: 20px;">
+        <h3 style="color: #c0392b; margin-top: 0;">Total Outstanding Dues: ₹<span th:text="${totalPendingAmount}">0.00</span></h3>
+        <p style="font-size: 12px; color: #555;">Scan this QR using GPay, PhonePe, or Paytm to settle your account instantly.</p>
+        <img th:src="${qrCodeBase64}" width="150" height="150" alt="UPI QR Code"/>
+    </div>
+
 </div>
 </body>
 </html>

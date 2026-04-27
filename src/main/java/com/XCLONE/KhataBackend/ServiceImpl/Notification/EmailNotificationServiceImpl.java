@@ -22,6 +22,11 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
 
     @Override
     public void sendReceiptEmail(String toEmail, String shopName, String billNumber, byte[] pdfData) {
+        sendReceiptEmail(toEmail, shopName, billNumber, pdfData, null);
+    }
+
+    @Override
+    public void sendReceiptEmail(String toEmail, String shopName, String billNumber, byte[] pdfData, java.math.BigDecimal totalPendingAmount) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -30,7 +35,7 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
             helper.setTo(toEmail);
             helper.setSubject("Receipt from " + shopName + " — " + billNumber);
 
-            String body = buildEmailBody(shopName, billNumber);
+            String body = buildEmailBody(shopName, billNumber, totalPendingAmount);
             helper.setText(body, true); // true = HTML content
 
             // Attach the PDF
@@ -46,24 +51,32 @@ public class EmailNotificationServiceImpl implements EmailNotificationService {
         }
     }
 
-    private String buildEmailBody(String shopName, String billNumber) {
+    private String buildEmailBody(String shopName, String billNumber, java.math.BigDecimal totalPendingAmount) {
+        String customMessage = "Thank you for your purchase! Your receipt is attached as a PDF.<br><br>If you have any questions about this bill, please contact the shop directly.";
+        
+        if (totalPendingAmount != null) {
+            customMessage = String.format(
+                "You have a new bill. <strong style=\"color: #c0392b;\">Your total pending balance is now ₹%s.</strong><br><br>" +
+                "Please find your invoice attached. A QR code is included inside the PDF to quickly settle your account online.", 
+                totalPendingAmount
+            );
+        }
+        
         return """
-                <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 480px; margin: auto; padding: 24px;">
+                <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 480px; margin: auto; padding: 24px; border: 1px solid #ddd; border-radius: 8px;">
                     <h2 style="color: #1a1a2e; margin-bottom: 4px;">🧾 Your Receipt</h2>
                     <p style="color: #555; font-size: 14px; margin-top: 0;">
                         Bill <strong>%s</strong> from <strong>%s</strong>
                     </p>
                     <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;">
                     <p style="color: #333; font-size: 14px; line-height: 1.6;">
-                        Thank you for your purchase! Your receipt is attached as a PDF.
-                        <br><br>
-                        If you have any questions about this bill, please contact the shop directly.
+                        %s
                     </p>
                     <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;">
                     <p style="color: #999; font-size: 11px; text-align: center;">
                         Powered by Khata — Smart billing for smart businesses
                     </p>
                 </div>
-                """.formatted(billNumber, shopName);
+                """.formatted(billNumber, shopName, customMessage);
     }
 }
