@@ -22,7 +22,12 @@ public class PdfGenerationService {
     private final TemplateEngine templateEngine;
     private final BillItemRepository billItemRepository;
 
+    // Overloaded method to support backward compatibility
     public byte[] generateReceiptPdf(Bill bill) {
+        return generateReceiptPdf(bill, null, null);
+    }
+
+    public byte[] generateReceiptPdf(Bill bill, String qrCodeBase64, BigDecimal totalPendingAmount) {
         try {
             Context context = new Context();
             context.setVariable("shopName", bill.getShopName());
@@ -53,6 +58,11 @@ public class PdfGenerationService {
             context.setVariable("total", total);
             context.setVariable("paid", paid);
             context.setVariable("due", due);
+            
+            // --- NEW VARIABLES FOR SMART INVOICE ---
+            context.setVariable("qrCodeBase64", qrCodeBase64);
+            context.setVariable("totalPendingAmount", totalPendingAmount);
+            // ---------------------------------------
 
             String html = templateEngine.process("invoice", context);
 

@@ -37,4 +37,5 @@ public class BillResponseDTO {
 
     private Instant createdAt;
     private Instant updatedAt;
+    private String receiptUrl;
 }

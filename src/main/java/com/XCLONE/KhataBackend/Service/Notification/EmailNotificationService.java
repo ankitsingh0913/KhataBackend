@@ -10,4 +10,6 @@ public interface EmailNotificationService {
      * @param pdfData     the generated PDF as bytes
      */
     void sendReceiptEmail(String toEmail, String shopName, String billNumber, byte[] pdfData);
+
+    void sendReceiptEmail(String toEmail, String shopName, String billNumber, byte[] pdfData, java.math.BigDecimal totalPendingAmount);
 }
