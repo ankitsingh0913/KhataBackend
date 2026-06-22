@@ -23,12 +23,16 @@ services:
   backend:
     build: .
     container_name: khata-backend
+    env_file:
+      - .env
     depends_on:
       - postgres
       - redis
     ports:
       - "8082:8082"
     environment:
+      #OAUTH
+      CLIENT_ID: ${CLIENT_ID}
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/khata_db
       SPRING_DATASOURCE_USERNAME: postgres
